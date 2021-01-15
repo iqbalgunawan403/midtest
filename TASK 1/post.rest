@@ -1,0 +1,11 @@
+GET  http://localhost:8080/api/customers/pagination?page=0&limit=5
+
+###
+
+
+
+GET  http://localhost:8080/api/customers/pagefiltersort?page=1&limit=5&age=20
+
+###
+
+GET http://localhost:8080:api/customers/filteringbyAge?age=20

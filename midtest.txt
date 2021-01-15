@@ -1,0 +1,100 @@
+Mid Test
+
+
+1. API POST /api/users/register
+  - with parameter request:
+    {
+      firstName: String, required
+      lastName: String, required
+      email: String, required
+      password: String, required, min 6 characters
+      address: String, required
+      birthDate: String, optional
+    }
+  - insert to db, choose one mysql/mongo
+  - email must unique, password must be hashed before store to db
+  - response 'success' status code 200 or 'failed' status code not equal 200
+2. API POST /api/login
+  - paramter request
+    {
+      email: String, required
+      password: String, required
+    }
+  - check to db to match email and password
+  - signing with JWT token is a plus
+  - must return response either
+    - success login
+    - email not found
+    - password not match
+3. API GET /api/users/list-profile
+  - return list of all users, with paging
+  - secure with JWT token is a plus
+  - request parameters
+  {
+    email: String, optional,
+    page: Number, required, more than 0
+    pageSize: Number, required, more than or equal 1
+  }
+  - can partially search with email 4 character min
+    - such as, parameter 'test' will return all email with domain gmail
+      - test@gmail.com, tester@gmail.com, testagain@yahoo.com
+  - pagination response
+    {
+      data: [
+        {
+          email: 'test@gmail.com',
+          firstName : 'Test',
+          ...
+          address: ''
+        },
+        ...
+      ],
+      total: Number, number of total page,
+      currentPage: Number, current page
+      pageSize: Number, number of data in one page
+    }
+    - for example, there are 7 users in db
+      /api/users/list-profile?page=0&pageSize=2 will return two users index 1 to 2
+      {
+        data: [
+          {
+            email: 'test@gmail.com',
+            firstName : 'Test',
+            ...
+            address: ''
+          },
+          {
+            email: 'tester@gmail.com',
+            firstName : 'Tester',
+            ...
+            address: ''
+          }
+        ],
+        total: 4,
+        currentPage: 0
+        pageSize: 2
+      }
+
+      /api/users/list-profile?page=2&pageSize=2 will return two users index 5 to 6
+      {
+        data: [
+          {
+            email: 'tester5@gmail.com',
+            firstName : 'Test',
+            ...
+            address: ''
+          },
+          {
+            email: 'tester6@gmail.com',
+            firstName : 'Tester',
+            ...
+            address: ''
+          }
+        ],
+        total: 4,
+        currentPage: 2
+        pageSize: 2
+      }
+
+  - cache response with redis, with requested parameters as key
+    - the next time there are request with same exact parameter, server will handle data from redis instead of mongo/mysql
